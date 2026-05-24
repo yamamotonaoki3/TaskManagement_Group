@@ -9,6 +9,7 @@ import java.util.List;
 public record TaskListResponse(
         Long id,
         Long userId,
+        Long groupId,
         String name,
         int position,
         boolean isDefault,
@@ -50,6 +51,7 @@ public record TaskListResponse(
         return new TaskListResponse(
                 list.getId(),
                 list.getUserId(),
+                list.getGroupId(),
                 list.getName(),
                 list.getPosition(),
                 list.isDefault(),

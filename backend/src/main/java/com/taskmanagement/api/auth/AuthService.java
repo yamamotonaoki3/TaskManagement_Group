@@ -49,7 +49,7 @@ public class AuthService {
 
     public Optional<MeResponse> getCurrentUser(String email) {
         return userRepository.findByEmail(email)
-                .map(u -> new MeResponse(u.getEmail(), u.getNickname()));
+                .map(u -> new MeResponse(u.getId(), u.getEmail(), u.getNickname()));
     }
 
     @Transactional
@@ -58,7 +58,7 @@ public class AuthService {
                 .map(u -> {
                     u.setNickname(nickname);
                     userRepository.save(u);
-                    return new MeResponse(u.getEmail(), u.getNickname());
+                    return new MeResponse(u.getId(), u.getEmail(), u.getNickname());
                 });
     }
 }

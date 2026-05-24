@@ -6,11 +6,12 @@ import { fetchMe, getToken, removeToken, updateNickname as updateNicknameApi } f
 export function useAuth() {
   const navigate = useNavigate();
   const [nickname, setNickname] = useState<string>('');
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   useEffect(() => {
     if (getToken()) {
       fetchMe()
-        .then((me) => setNickname(me.nickname))
+        .then((me) => { setNickname(me.nickname); setCurrentUserId(me.id); })
         .catch(() => setNickname(''));
     }
   }, []);
@@ -30,5 +31,5 @@ export function useAuth() {
     setNickname(me.nickname);
   }
 
-  return { logout, isAuthenticated, nickname, updateNickname };
+  return { logout, isAuthenticated, nickname, currentUserId, updateNickname };
 }
