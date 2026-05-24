@@ -1,0 +1,65 @@
+.section {
+  margin-bottom: 32px;
+  background: #e8edf2;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.groupName {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.manageButton {
+  padding: 4px 14px;
+  font-size: 13px;
+  background: #4a6cf7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.manageButton:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+}
+
+.manageButton:not(:disabled):hover {
+  background: #3a5ce6;
+}
+
+.columns {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.addListRow {
+  margin-top: 10px;
+}
+
+.addListButton {
+  padding: 6px 18px;
+  background: #fff;
+  color: #4a6cf7;
+  border: 1px dashed #4a6cf7;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.addListButton:hover {
+  background: #ebf0ff;
+}

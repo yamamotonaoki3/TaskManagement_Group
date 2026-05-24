@@ -64,6 +64,20 @@
   background-color: #1a5fc8;
 }
 
+.createGroupButton {
+  padding: 8px 24px;
+  background-color: #4a6cf7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.createGroupButton:hover {
+  background-color: #3a5ce6;
+}
+
 .completedButton {
   padding: 8px 24px;
   background-color: #48bb78;

@@ -16,8 +16,11 @@ public class TaskList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "group_id")
+    private Long groupId;
 
     @Column(nullable = false)
     private String name;
@@ -58,8 +61,16 @@ public class TaskList {
         return createdAt;
     }
 
+    public Long getGroupId() {
+        return groupId;
+    }
+
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public void setName(String name) {

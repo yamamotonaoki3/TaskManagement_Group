@@ -7,6 +7,7 @@ export interface LoginResponse {
 }
 
 export interface MeResponse {
+  id: number;
   email: string;
   nickname: string;
 }

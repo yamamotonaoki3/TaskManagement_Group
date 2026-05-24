@@ -10,4 +10,7 @@ public interface TaskListRepository extends JpaRepository<TaskList, Long> {
 
     @Query("SELECT COALESCE(MAX(l.position), -1) FROM TaskList l")
     int findMaxPosition();
+
+    @Query("SELECT l FROM TaskList l WHERE l.userId = :userId OR l.groupId IN :groupIds ORDER BY l.position ASC")
+    List<TaskList> findByUserIdOrGroupIdIn(Long userId, java.util.Collection<Long> groupIds);
 }

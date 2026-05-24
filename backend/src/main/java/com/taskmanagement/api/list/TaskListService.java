@@ -1,5 +1,7 @@
 package com.taskmanagement.api.list;
 
+import com.taskmanagement.api.group.GroupMemberRepository;
+import com.taskmanagement.api.group.GroupRepository;
 import com.taskmanagement.api.task.Task;
 import com.taskmanagement.api.task.TaskRepository;
 import com.taskmanagement.api.user.UserRepository;
@@ -19,14 +21,20 @@ public class TaskListService {
     private final TaskListRepository taskListRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
     public TaskListService(
             TaskListRepository taskListRepository,
             TaskRepository taskRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository) {
         this.taskListRepository = taskListRepository;
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.groupRepository = groupRepository;
+        this.groupMemberRepository = groupMemberRepository;
     }
 
     @Transactional
@@ -37,7 +45,18 @@ public class TaskListService {
                 .getId();
         int nextPosition = taskListRepository.findMaxPosition() + 1;
         TaskList list = new TaskList();
-        list.setUserId(userId);
+        if (req.groupId() != null) {
+            groupRepository.findById(req.groupId())
+                    .orElseThrow(() -> new EntityNotFoundException("グループが見つかりません: " + req.groupId()));
+            boolean isMember = groupMemberRepository.existsByGroupIdAndUserId(req.groupId(), userId);
+            com.taskmanagement.api.group.Group group = groupRepository.findById(req.groupId()).get();
+            if (!group.getOwnerUserId().equals(userId) && !isMember) {
+                throw new IllegalStateException("このグループへのアクセス権がありません");
+            }
+            list.setGroupId(req.groupId());
+        } else {
+            list.setUserId(userId);
+        }
         list.setName(req.name());
         list.setPosition(nextPosition);
         list.setCreatedAt(LocalDateTime.now());
@@ -75,7 +94,16 @@ public class TaskListService {
     }
 
     public List<TaskListResponse> findAll() {
-        List<TaskList> lists = taskListRepository.findAllByOrderByPositionAsc();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("ユーザーが見つかりません: " + email))
+                .getId();
+
+        List<Long> myGroupIds = groupRepository.findAllByMember(userId).stream()
+                .map(com.taskmanagement.api.group.Group::getId)
+                .toList();
+
+        List<TaskList> lists = taskListRepository.findByUserIdOrGroupIdIn(userId, myGroupIds);
 
         List<Task> tasks = taskRepository.findByArchivedFalseOrderByTaskListIdAscPositionAsc();
         Map<Long, List<Task>> tasksByListId = tasks.stream()
