@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>TaskBoard - 完了タスク一覧（S-05）</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="board-header">
+    <div class="logo">TaskBoard</div>
+    <div class="header-right">
+      <span class="user-name" id="header-user-name"></span>
+      <button class="btn btn-secondary" id="logout-btn">ログアウト</button>
+    </div>
+  </header>
+
+  <main class="history-page">
+    <h1 style="margin: 0 0 12px; font-size: 18px; color: #1a4f8a;">完了タスク一覧</h1>
+
+    <div class="history-search">
+      <input type="text" id="search-title" placeholder="タイトルで検索（50文字以内）" maxlength="60">
+      <input type="text" id="search-desc"  placeholder="説明文で検索（50文字以内）" maxlength="60">
+      <button class="btn btn-primary" id="search-btn">検索</button>
+      <button class="btn" id="search-clear-btn">クリア</button>
+    </div>
+    <div class="history-search-error" id="search-error"></div>
+
+    <div class="history-results" id="results"></div>
+  </main>
+
+  <footer class="board-footer">
+    <button class="btn btn-secondary" id="back-btn">← ボード画面へ戻る</button>
+  </footer>
+
+  <!-- 読み取り専用カード詳細モーダル -->
+  <div class="modal-overlay" id="card-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>カード詳細（履歴）</h2>
+        <button class="modal-close" id="modal-close" aria-label="閉じる">×</button>
+      </header>
+      <div class="modal-body">
+        <label class="field">
+          <span class="field-label">タイトル</span>
+          <input type="text" id="modal-title-input" class="field-input" disabled>
+        </label>
+        <label class="field">
+          <span class="field-label">説明文</span>
+          <textarea id="modal-desc-input" class="field-input" rows="3" disabled></textarea>
+        </label>
+        <label class="field">
+          <span class="field-label">優先度</span>
+          <input type="text" id="modal-priority-display" class="field-input" disabled>
+        </label>
+        <label class="field">
+          <span class="field-label">期限</span>
+          <input type="text" id="modal-due-input" class="field-input" disabled>
+        </label>
+        <label class="field">
+          <span class="field-label">完了日</span>
+          <input type="text" id="modal-completed-input" class="field-input" disabled>
+        </label>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn" id="modal-cancel">閉じる</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="completed-tasks.js"></script>
+</body>
+</html>

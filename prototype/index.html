@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>TaskBoard プロトタイプ - ボード画面（Step 3: フェーズ3）</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="board-header">
+    <div class="logo">TaskBoard</div>
+    <div class="header-right">
+      <span class="user-name" id="header-user-name"></span>
+      <button class="btn btn-secondary" id="logout-btn">ログアウト</button>
+    </div>
+  </header>
+
+  <main class="board-main">
+    <div class="kanban" id="kanban">
+      <!-- 列はJSから動的生成 -->
+    </div>
+  </main>
+
+  <footer class="board-footer">
+    <button class="btn btn-secondary" id="add-list-btn">+ リスト追加</button>
+    <button class="btn btn-secondary" id="completed-list-btn">完了タスク一覧へ</button>
+  </footer>
+
+  <!-- カード詳細モーダル（S-02）：新規追加・編集の両方に使用 -->
+  <div class="modal-overlay" id="card-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-header">
+        <h2 id="modal-title">カード詳細</h2>
+        <button class="modal-close" id="modal-close" aria-label="閉じる">×</button>
+      </header>
+      <div class="modal-body">
+        <label class="field">
+          <span class="field-label">タイトル <span class="required">*</span></span>
+          <input type="text" id="modal-title-input" class="field-input" maxlength="110">
+          <span class="field-error" id="modal-title-error"></span>
+        </label>
+        <label class="field">
+          <span class="field-label">説明文</span>
+          <textarea id="modal-desc-input" class="field-input" rows="3" maxlength="2010"></textarea>
+          <span class="field-error" id="modal-desc-error"></span>
+        </label>
+        <label class="field">
+          <span class="field-label">優先度</span>
+          <select id="modal-priority-input" class="field-input">
+            <option value="">（設定なし）</option>
+            <option value="high">高</option>
+            <option value="medium">中</option>
+            <option value="low">低</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">期限（YYYY/MM/DD・過去日付は不可・8桁で自動整形）</span>
+          <input type="text" id="modal-due-input" class="field-input"
+                 placeholder="例: 2026/12/31（半角数字8桁でもOK）" inputmode="numeric" maxlength="10">
+          <span class="field-error" id="modal-due-error"></span>
+        </label>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn btn-primary" id="modal-save">保存</button>
+        <button class="btn" id="modal-cancel">キャンセル</button>
+        <button class="btn btn-danger" id="modal-delete">削除</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- リスト追加モーダル -->
+  <div class="modal-overlay" id="list-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="list-modal-title">
+      <header class="modal-header">
+        <h2 id="list-modal-title">リスト追加</h2>
+        <button class="modal-close" id="list-modal-close" aria-label="閉じる">×</button>
+      </header>
+      <div class="modal-body">
+        <label class="field">
+          <span class="field-label">リスト名 <span class="required">*</span></span>
+          <input type="text" id="list-name-input" class="field-input" maxlength="40" placeholder="1〜30文字">
+          <span class="field-error" id="list-name-error"></span>
+        </label>
+        <label class="field">
+          <span class="field-label">追加する位置</span>
+          <select id="list-position-select" class="field-input"></select>
+          <span class="field-help">現在のリストの間や端を選択できます。後からドラッグでも並び替え可能。</span>
+        </label>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn btn-primary" id="list-modal-save">追加</button>
+        <button class="btn" id="list-modal-cancel">キャンセル</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

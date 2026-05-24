@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskBoard - 新規登録（S-03）</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+  <main class="auth-container">
+    <div class="auth-card">
+      <header class="auth-header">
+        <div class="auth-logo">TaskBoard</div>
+        <h1 class="auth-title">新規登録</h1>
+      </header>
+
+      <form id="register-form" class="auth-form" novalidate>
+        <label class="field">
+          <span class="field-label">メールアドレス <span class="required">*</span></span>
+          <input type="email" id="register-email" class="field-input" maxlength="266" autocomplete="email">
+          <span class="field-error" id="register-email-error"></span>
+        </label>
+        <label class="field">
+          <span class="field-label">パスワード <span class="required">*</span></span>
+          <input type="password" id="register-password" class="field-input" maxlength="64" autocomplete="new-password">
+          <span class="field-help">8〜64文字、英字と数字を最低1文字ずつ含む</span>
+          <span class="field-error" id="register-password-error"></span>
+        </label>
+        <label class="field">
+          <span class="field-label">パスワード（確認） <span class="required">*</span></span>
+          <input type="password" id="register-password-confirm" class="field-input" maxlength="64" autocomplete="new-password">
+          <span class="field-error" id="register-password-confirm-error"></span>
+        </label>
+        <div class="field-error" id="register-form-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">登録</button>
+      </form>
+
+      <p class="auth-link">
+        すでにアカウントをお持ちの方は <a href="login.html">ログイン画面へ</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    // 既にログイン済みならボード画面へ
+    if (getSession()) {
+      window.location.href = 'index.html';
+    }
+
+    document.getElementById('register-form').addEventListener('submit', e => {
+      e.preventDefault();
+
+      const emailEl   = document.getElementById('register-email');
+      const pwEl      = document.getElementById('register-password');
+      const pwConfEl  = document.getElementById('register-password-confirm');
+
+      const emailErrEl   = document.getElementById('register-email-error');
+      const pwErrEl      = document.getElementById('register-password-error');
+      const pwConfErrEl  = document.getElementById('register-password-confirm-error');
+      const formErrEl    = document.getElementById('register-form-error');
+
+      [emailErrEl, pwErrEl, pwConfErrEl, formErrEl].forEach(el => el.textContent = '');
+
+      const code = register(emailEl.value, pwEl.value, pwConfEl.value);
+      if (code === null) {
+        window.location.href = 'login.html?registered=1';
+        return;
+      }
+
+      switch (code) {
+        case 'E-005':
+        case 'E-006':
+        case 'E-101':
+          emailErrEl.textContent = errorMessage(code);
+          break;
+        case 'E-007':
+        case 'E-008':
+        case 'E-009':
+          pwErrEl.textContent = errorMessage(code);
+          break;
+        case 'E-010':
+        case 'E-011':
+          pwConfErrEl.textContent = errorMessage(code);
+          break;
+        default:
+          formErrEl.textContent = errorMessage(code);
+      }
+    });
+  </script>
+</body>
+</html>

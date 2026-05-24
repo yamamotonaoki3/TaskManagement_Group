@@ -1,0 +1,207 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f0f4f8;
+}
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 48px;
+  background-color: #1f6feb;
+  color: #fff;
+}
+
+.logoutButton {
+  padding: 5px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  background-color: transparent;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.logoutButton:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.searchArea {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+
+.searchLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.searchInput {
+  padding: 7px 10px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 220px;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #1f6feb;
+}
+
+.searchButton {
+  padding: 8px 24px;
+  background-color: #1f6feb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.searchButton:hover:not(:disabled) {
+  background-color: #1a5fc8;
+}
+
+.searchButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.main {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 24px;
+}
+
+.hint {
+  color: #718096;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.error {
+  color: #c53030;
+  font-size: 14px;
+  text-align: center;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 6px;
+  padding: 16px;
+  max-width: 480px;
+  margin: 24px auto 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  background-color: #edf2f7;
+  border-bottom: 2px solid #cbd5e0;
+  border-right: 1px solid #cbd5e0;
+}
+
+.th:last-child {
+  border-right: none;
+}
+
+.row {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.row:hover {
+  background-color: #ebf8ff;
+}
+
+.td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #2d3748;
+  text-align: left;
+  border-bottom: 1px solid #cbd5e0;
+  border-right: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.td:last-child {
+  border-right: none;
+}
+
+.dateCell {
+  white-space: nowrap;
+  color: #718096;
+  font-size: 13px;
+  width: 120px;
+}
+
+.descCell {
+  color: #718096;
+  max-width: 400px;
+}
+
+.descInner {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-start;
+  padding: 12px 24px;
+  background-color: #e2e8f0;
+  border-top: 1px solid #cbd5e0;
+}
+
+.backButton {
+  padding: 8px 24px;
+  background-color: #718096;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background-color: #5a6374;
+}

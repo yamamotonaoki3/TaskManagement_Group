@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskboard
+    username: taskboard
+    password: taskboard
+  jpa:
+    hibernate:
+      ddl-auto: validate          # スキーマは Flyway が管理、Hibernate は検証のみ
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: taskmanagement-secret-key-must-be-at-least-32-characters-long-for-hs256
+  expiration: 86400000

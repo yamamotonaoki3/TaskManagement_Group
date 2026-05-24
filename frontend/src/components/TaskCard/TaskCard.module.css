@@ -1,0 +1,84 @@
+.card {
+  background: #fff;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  cursor: grab;
+  transition: box-shadow 0.15s, opacity 0.15s;
+}
+
+.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.badge[data-priority='high'] {
+  background-color: #c53030;
+}
+
+.badge[data-priority='medium'] {
+  background-color: #d69e2e;
+}
+
+.badge[data-priority='low'] {
+  background-color: #3182ce;
+}
+
+.title {
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.due {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #718096;
+}
+
+.deleteBtn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a0aec0;
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: color 0.1s, background 0.1s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card:hover .deleteBtn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.deleteBtn:hover {
+  color: #e53e3e;
+  background: #fff5f5;
+}

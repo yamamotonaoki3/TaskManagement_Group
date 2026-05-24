@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskBoard - ログイン（S-04）</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+  <main class="auth-container">
+    <div class="auth-card">
+      <header class="auth-header">
+        <div class="auth-logo">TaskBoard</div>
+        <h1 class="auth-title">ログイン</h1>
+      </header>
+
+      <div id="auth-success" class="auth-success" hidden></div>
+
+      <form id="login-form" class="auth-form" novalidate>
+        <label class="field">
+          <span class="field-label">メールアドレス <span class="required">*</span></span>
+          <input type="email" id="login-email" class="field-input" maxlength="266" autocomplete="email">
+          <span class="field-error" id="login-email-error"></span>
+        </label>
+        <label class="field">
+          <span class="field-label">パスワード <span class="required">*</span></span>
+          <input type="password" id="login-password" class="field-input" maxlength="64" autocomplete="current-password">
+          <span class="field-error" id="login-password-error"></span>
+        </label>
+        <div class="field-error" id="login-form-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">ログイン</button>
+      </form>
+
+      <p class="auth-link">
+        アカウントをお持ちでない方は <a href="register.html">新規登録はこちら</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    // 既にログイン済みならボード画面へ
+    if (getSession()) {
+      window.location.href = 'index.html';
+    }
+
+    // 登録完了からの遷移メッセージ
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('registered') === '1') {
+      const banner = document.getElementById('auth-success');
+      banner.textContent = '登録が完了しました。ログインしてください。';
+      banner.hidden = false;
+    }
+
+    document.getElementById('login-form').addEventListener('submit', e => {
+      e.preventDefault();
+
+      const emailEl = document.getElementById('login-email');
+      const pwEl = document.getElementById('login-password');
+      const emailErrEl = document.getElementById('login-email-error');
+      const pwErrEl = document.getElementById('login-password-error');
+      const formErrEl = document.getElementById('login-form-error');
+
+      emailErrEl.textContent = '';
+      pwErrEl.textContent = '';
+      formErrEl.textContent = '';
+
+      const code = login(emailEl.value, pwEl.value);
+      if (code === null) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // エラーコードに応じて適切な箇所に表示
+      if (code === 'E-005' || code === 'E-006') {
+        emailErrEl.textContent = errorMessage(code);
+      } else if (code === 'E-007') {
+        pwErrEl.textContent = errorMessage(code);
+      } else {
+        // E-102 など認証系
+        formErrEl.textContent = errorMessage(code);
+      }
+    });
+  </script>
+</body>
+</html>
