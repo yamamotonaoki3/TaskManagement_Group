@@ -59,7 +59,7 @@ public class TaskService {
         List<Task> tasks = taskRepository.findByArchivedFalseOrderByTaskListIdAscPositionAsc();
         Map<Long, String> nicknameMap = buildNicknameMap(tasks);
         return tasks.stream()
-                .map(t -> TaskResponse.from(t, nicknameMap.get(t.getAssigneeUserId())))
+                .map(t -> TaskResponse.from(t, t.getAssigneeUserId() != null ? nicknameMap.get(t.getAssigneeUserId()) : null))
                 .toList();
     }
 
@@ -228,7 +228,7 @@ public class TaskService {
 
         Map<Long, String> nicknameMap = buildNicknameMap(filtered);
         return filtered.stream()
-                .map(t -> TaskResponse.from(t, nicknameMap.get(t.getAssigneeUserId())))
+                .map(t -> TaskResponse.from(t, t.getAssigneeUserId() != null ? nicknameMap.get(t.getAssigneeUserId()) : null))
                 .toList();
     }
 
@@ -245,7 +245,7 @@ public class TaskService {
 
         Map<Long, String> nicknameMap = buildNicknameMap(tasks);
         return tasks.stream()
-                .map(t -> TaskResponse.from(t, nicknameMap.get(t.getAssigneeUserId())))
+                .map(t -> TaskResponse.from(t, t.getAssigneeUserId() != null ? nicknameMap.get(t.getAssigneeUserId()) : null))
                 .toList();
     }
 }
