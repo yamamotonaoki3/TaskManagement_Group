@@ -12,5 +12,6 @@ public record TaskRequest(
         @NotBlank @Size(max = 100) String title,
         @Size(max = 2000) String description,
         @FutureOrPresent LocalDate dueDate,
-        @Pattern(regexp = "^(high|medium|low)$") String priority
+        @Pattern(regexp = "^(high|medium|low)$") String priority,
+        Long assigneeUserId
 ) {}

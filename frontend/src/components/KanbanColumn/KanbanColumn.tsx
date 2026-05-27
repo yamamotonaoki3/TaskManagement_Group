@@ -16,6 +16,7 @@ const PRIORITY_ORDER: Record<string, number> = { high: 0, medium: 1, low: 2 };
 interface KanbanColumnProps {
   listId: number;
   listName: string;
+  groupId: number | null;
   tasks: TaskResponse[];
   isSearching: boolean;
   isOver: boolean;
@@ -28,7 +29,7 @@ interface KanbanColumnProps {
   onReorder: (listId: number, taskIds: number[]) => Promise<void>;
 }
 
-export function KanbanColumn({ listId, listName, tasks, isSearching, isOver, showAddButton, isDefault, onCreate, onUpdate, onDelete, onDeleteList, onReorder }: KanbanColumnProps) {
+export function KanbanColumn({ listId, listName, groupId, tasks, isSearching, isOver, showAddButton, isDefault, onCreate, onUpdate, onDelete, onDeleteList, onReorder }: KanbanColumnProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -125,6 +126,7 @@ export function KanbanColumn({ listId, listName, tasks, isSearching, isOver, sho
       {isModalOpen && (
         <TaskCreateModal
           listId={listId}
+          groupId={groupId}
           onClose={() => setIsModalOpen(false)}
           onCreate={onCreate}
         />

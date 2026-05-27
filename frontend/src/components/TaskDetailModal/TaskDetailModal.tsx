@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import type { TaskResponse, TaskUpdateRequest } from '../../types/task';
+import { useGroups } from '../../hooks/useGroups';
+import type { GroupMemberResponse, TaskResponse, TaskUpdateRequest } from '../../types/task';
 import styles from './TaskDetailModal.module.css';
 
 interface TaskDetailModalProps {
@@ -15,8 +16,18 @@ export function TaskDetailModal({ task, onClose, onUpdate, onDelete }: TaskDetai
   const [description, setDescription] = useState(task.description ?? '');
   const [dueDate, setDueDate] = useState(task.dueDate ?? '');
   const [priority, setPriority] = useState(task.priority ?? 'medium');
+  const [assigneeUserId, setAssigneeUserId] = useState<number | null>(task.assigneeUserId);
+  const [members, setMembers] = useState<GroupMemberResponse[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { getMembers } = useGroups();
+
+  useEffect(() => {
+    if (task.groupId != null) {
+      getMembers(task.groupId).then(setMembers).catch(() => {});
+    }
+  }, [task.groupId, getMembers]);
 
   const handleDelete = async () => {
     if (!window.confirm('このカードを削除してもよろしいですか？')) return;
@@ -38,12 +49,20 @@ export function TaskDetailModal({ task, onClose, onUpdate, onDelete }: TaskDetai
     setSubmitting(true);
     setError(null);
     try {
-      await onUpdate(task.id, {
+      const updateData: TaskUpdateRequest = {
         title: title.trim(),
         description: description.trim() || undefined,
         dueDate: dueDate || null,
         priority: priority as 'high' | 'medium' | 'low',
-      });
+      };
+      if (task.groupId != null) {
+        if (assigneeUserId === null) {
+          updateData.clearAssignee = true;
+        } else {
+          updateData.assigneeUserId = assigneeUserId;
+        }
+      }
+      await onUpdate(task.id, updateData);
       onClose();
     } catch {
       setError('データの保存に失敗しました。時間をおいて再度お試しください');
@@ -99,6 +118,21 @@ export function TaskDetailModal({ task, onClose, onUpdate, onDelete }: TaskDetai
               <option value="low">低</option>
             </select>
           </label>
+          {task.groupId != null && (
+            <label className={styles.label}>
+              担当者
+              <select
+                className={styles.select}
+                value={assigneeUserId ?? ''}
+                onChange={(e) => setAssigneeUserId(e.target.value ? Number(e.target.value) : null)}
+              >
+                <option value="">未割り当て</option>
+                {members.map((m) => (
+                  <option key={m.userId} value={m.userId}>{m.nickname}</option>
+                ))}
+              </select>
+            </label>
+          )}
           {error && <p className={styles.error}>{error}</p>}
           <div className={styles.actions}>
             <button type="button" className={styles.deleteButton} onClick={handleDelete}>

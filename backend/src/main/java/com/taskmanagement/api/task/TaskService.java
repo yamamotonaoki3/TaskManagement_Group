@@ -5,12 +5,16 @@ import com.taskmanagement.api.list.TaskListRepository;
 import com.taskmanagement.api.task.dto.TaskRequest;
 import com.taskmanagement.api.task.dto.TaskStatusRequest;
 import com.taskmanagement.api.task.dto.TaskUpdateRequest;
+import com.taskmanagement.api.user.User;
+import com.taskmanagement.api.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SequencedCollection;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,23 +27,46 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskListRepository taskListRepository;
+    private final UserRepository userRepository;
 
-    public TaskService(TaskRepository taskRepository, TaskListRepository taskListRepository) {
+    public TaskService(TaskRepository taskRepository, TaskListRepository taskListRepository,
+            UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.taskListRepository = taskListRepository;
+        this.userRepository = userRepository;
+    }
+
+    private String resolveNickname(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+        return userRepository.findById(userId).map(User::getNickname).orElse(null);
+    }
+
+    private Map<Long, String> buildNicknameMap(List<Task> tasks) {
+        Set<Long> ids = tasks.stream()
+                .map(Task::getAssigneeUserId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        if (ids.isEmpty()) {
+            return Map.of();
+        }
+        return userRepository.findAllById(ids).stream()
+                .collect(Collectors.toMap(User::getId, User::getNickname));
     }
 
     public List<TaskResponse> findAll() {
-        return taskRepository.findByArchivedFalseOrderByTaskListIdAscPositionAsc()
-                .stream()
-                .map(TaskResponse::from)
+        List<Task> tasks = taskRepository.findByArchivedFalseOrderByTaskListIdAscPositionAsc();
+        Map<Long, String> nicknameMap = buildNicknameMap(tasks);
+        return tasks.stream()
+                .map(t -> TaskResponse.from(t, nicknameMap.get(t.getAssigneeUserId())))
                 .toList();
     }
 
     public TaskResponse findById(Long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found: " + id));
-        return TaskResponse.from(task);
+        return TaskResponse.from(task, resolveNickname(task.getAssigneeUserId()));
     }
 
     @Transactional
@@ -58,7 +85,8 @@ public class TaskService {
         task.setPosition(nextPos);
         task.setArchived(false);
         task.setCreatedAt(LocalDateTime.now());
-        return TaskResponse.from(taskRepository.save(task));
+        task.setAssigneeUserId(req.assigneeUserId());
+        return TaskResponse.from(taskRepository.save(task), resolveNickname(req.assigneeUserId()));
     }
 
     @Transactional
@@ -85,7 +113,8 @@ public class TaskService {
             reorderPosition(task, req.position());
         }
 
-        return TaskResponse.from(taskRepository.save(task));
+        Task saved = taskRepository.save(task);
+        return TaskResponse.from(saved, resolveNickname(saved.getAssigneeUserId()));
     }
 
     private void reorderPosition(Task movedTask, int newPosition) {
@@ -115,8 +144,14 @@ public class TaskService {
         if (req.priority() != null) {
             task.setPriority(req.priority());
         }
+        if (Boolean.TRUE.equals(req.clearAssignee())) {
+            task.setAssigneeUserId(null);
+        } else if (req.assigneeUserId() != null) {
+            task.setAssigneeUserId(req.assigneeUserId());
+        }
 
-        return TaskResponse.from(taskRepository.save(task));
+        Task saved = taskRepository.save(task);
+        return TaskResponse.from(saved, resolveNickname(saved.getAssigneeUserId()));
     }
 
     @Transactional
@@ -154,58 +189,63 @@ public class TaskService {
         boolean hasTitleQ = titleQ != null && !titleQ.isBlank();
         boolean hasDescQ = descQ != null && !descQ.isBlank();
 
+        List<Task> filtered;
         if (!hasTitleQ && !hasDescQ) {
-            return done.stream().map(TaskResponse::from).toList();
-        }
+            filtered = done;
+        } else {
+            LinkedHashSet<Task> results = new LinkedHashSet<>();
 
-        LinkedHashSet<Task> results = new LinkedHashSet<>();
-
-        if (hasTitleQ && titleQ != null) {
-            String[] titleWords = titleQ.trim().split("\\s+");
-            for (Task t : done) {
-                String lowerTitle = t.getTitle().toLowerCase();
-                for (String word : titleWords) {
-                    if (lowerTitle.contains(word.toLowerCase())) {
-                        results.add(t);
-                        break;
+            if (hasTitleQ && titleQ != null) {
+                String[] titleWords = titleQ.trim().split("\\s+");
+                for (Task t : done) {
+                    String lowerTitle = t.getTitle().toLowerCase();
+                    for (String word : titleWords) {
+                        if (lowerTitle.contains(word.toLowerCase())) {
+                            results.add(t);
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        if (hasDescQ && descQ != null) {
-            String[] descWords = descQ.trim().split("\\s+");
-            for (Task t : done) {
-                if (t.getDescription() == null) {
-                    continue;
-                }
-                String lowerDesc = t.getDescription().toLowerCase();
-                for (String word : descWords) {
-                    if (lowerDesc.contains(word.toLowerCase())) {
-                        results.add(t);
-                        break;
+            if (hasDescQ && descQ != null) {
+                String[] descWords = descQ.trim().split("\\s+");
+                for (Task t : done) {
+                    if (t.getDescription() == null) {
+                        continue;
+                    }
+                    String lowerDesc = t.getDescription().toLowerCase();
+                    for (String word : descWords) {
+                        if (lowerDesc.contains(word.toLowerCase())) {
+                            results.add(t);
+                            break;
+                        }
                     }
                 }
             }
+            filtered = results.stream().toList();
         }
 
-        return results.stream().map(TaskResponse::from).toList();
+        Map<Long, String> nicknameMap = buildNicknameMap(filtered);
+        return filtered.stream()
+                .map(t -> TaskResponse.from(t, nicknameMap.get(t.getAssigneeUserId())))
+                .toList();
     }
 
     public List<TaskResponse> search(String query) {
+        List<Task> tasks;
         if (query == null || query.isBlank()) {
-            return taskRepository.findAll()
-                    .stream()
-                    .map(TaskResponse::from)
-                    .toList();
+            tasks = taskRepository.findAll();
+        } else {
+            SequencedCollection<Task> results = Arrays.stream(query.trim().split("\\s+"))
+                    .flatMap(keyword -> taskRepository.searchByKeyword(keyword).stream())
+                    .collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
+            tasks = results.stream().toList();
         }
 
-        SequencedCollection<Task> results = Arrays.stream(query.trim().split("\\s+"))
-                .flatMap(keyword -> taskRepository.searchByKeyword(keyword).stream())
-                .collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
-
-        return results.stream()
-                .map(TaskResponse::from)
+        Map<Long, String> nicknameMap = buildNicknameMap(tasks);
+        return tasks.stream()
+                .map(t -> TaskResponse.from(t, nicknameMap.get(t.getAssigneeUserId())))
                 .toList();
     }
 }

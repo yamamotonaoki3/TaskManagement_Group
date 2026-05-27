@@ -200,6 +200,7 @@ export function KanbanBoard() {
                         key={listId}
                         listId={list.id}
                         listName={list.name}
+                        groupId={null}
                         tasks={tasks}
                         isSearching={query.trim() !== ''}
                         isOver={overColumnId === list.id}

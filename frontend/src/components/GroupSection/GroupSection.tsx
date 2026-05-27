@@ -202,6 +202,7 @@ export function GroupSection({
                   key={listId}
                   listId={list.id}
                   listName={list.name}
+                  groupId={group.id}
                   tasks={tasks}
                   isSearching={isSearching}
                   isOver={overColumnId === list.id}
