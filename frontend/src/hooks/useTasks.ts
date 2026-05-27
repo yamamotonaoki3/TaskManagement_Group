@@ -85,5 +85,5 @@ export function useTasks() {
     await refresh();
   };
 
-  return { lists, columns, columnOrder, loading, error, query, setQuery, create, patchStatus, patchTask, addList, reorder, reorderColumns, deleteTask, removeList };
+  return { lists, columns, columnOrder, loading, error, query, setQuery, create, patchStatus, patchTask, addList, reorder, reorderColumns, deleteTask, removeList, refresh };
 }
