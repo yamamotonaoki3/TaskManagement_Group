@@ -21,7 +21,7 @@ const LIST_NAME_TO_STATUS: Record<string, 'todo' | 'in_progress' | 'done'> = {
 export function KanbanBoard() {
   const navigate = useNavigate();
   const { currentUserId } = useAuth();
-  const { lists, columns, columnOrder, loading, error, query, setQuery, create, patchStatus, patchTask, addList, reorder, reorderColumns, deleteTask, removeList } = useTasks();
+  const { lists, columns, columnOrder, loading, error, query, setQuery, create, patchStatus, patchTask, addList, reorder, reorderColumns, deleteTask, removeList, refresh } = useTasks();
   const { groups, addGroup } = useGroups();
 
   const [overColumnId, setOverColumnId] = useState<number | null>(null);
@@ -51,6 +51,7 @@ export function KanbanBoard() {
     if (!newGroupName.trim()) return;
     setCreatingGroup(true);
     await addGroup(newGroupName.trim());
+    await refresh();
     setNewGroupName('');
     setShowCreateGroup(false);
     setCreatingGroup(false);

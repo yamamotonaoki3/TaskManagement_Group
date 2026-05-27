@@ -1,5 +1,6 @@
 package com.taskmanagement.api.group;
 
+import com.taskmanagement.api.list.TaskListService;
 import com.taskmanagement.api.user.User;
 import com.taskmanagement.api.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,14 +18,17 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
+    private final TaskListService taskListService;
 
     public GroupService(
             GroupRepository groupRepository,
             GroupMemberRepository groupMemberRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            TaskListService taskListService) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.userRepository = userRepository;
+        this.taskListService = taskListService;
     }
 
     @Transactional
@@ -35,6 +39,7 @@ public class GroupService {
         group.setOwnerUserId(me.getId());
         group.setCreatedAt(LocalDateTime.now());
         Group saved = groupRepository.save(group);
+        taskListService.createDefaultListsForGroup(saved.getId());
 
         GroupMember owner = new GroupMember();
         owner.setGroupId(saved.getId());
