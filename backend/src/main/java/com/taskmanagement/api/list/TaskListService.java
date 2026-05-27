@@ -94,6 +94,20 @@ public class TaskListService {
     }
 
     @Transactional
+    public void createDefaultListsForGroup(Long groupId) {
+        String[] names = {"やること", "進行中", "完了"};
+        for (int i = 0; i < names.length; i++) {
+            TaskList list = new TaskList();
+            list.setGroupId(groupId);
+            list.setName(names[i]);
+            list.setPosition(i);
+            list.setIsDefault(true);
+            list.setCreatedAt(LocalDateTime.now());
+            taskListRepository.save(list);
+        }
+    }
+
+    @Transactional
     public void createDefaultListsForUser(Long userId) {
         String[] names = {"やること", "進行中", "完了"};
         for (int i = 0; i < names.length; i++) {
