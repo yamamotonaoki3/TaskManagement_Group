@@ -84,4 +84,8 @@ public class TaskList {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public void setIsDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleConflict(IllegalStateException ex) {
         return Map.of("message", ex.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleDataIntegrity(DataIntegrityViolationException ex) {
+        return Map.of("message", "データの整合性エラーが発生しました");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

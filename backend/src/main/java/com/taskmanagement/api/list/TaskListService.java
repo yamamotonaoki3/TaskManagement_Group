@@ -93,6 +93,20 @@ public class TaskListService {
         taskListRepository.delete(list);
     }
 
+    @Transactional
+    public void createDefaultListsForUser(Long userId) {
+        String[] names = {"やること", "進行中", "完了"};
+        for (int i = 0; i < names.length; i++) {
+            TaskList list = new TaskList();
+            list.setUserId(userId);
+            list.setName(names[i]);
+            list.setPosition(i);
+            list.setIsDefault(true);
+            list.setCreatedAt(LocalDateTime.now());
+            taskListRepository.save(list);
+        }
+    }
+
     public List<TaskListResponse> findAll() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Long userId = userRepository.findByEmail(email)
