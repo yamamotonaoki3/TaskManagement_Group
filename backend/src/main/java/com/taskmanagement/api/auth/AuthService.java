@@ -1,5 +1,6 @@
 package com.taskmanagement.api.auth;
 
+import com.taskmanagement.api.list.TaskListService;
 import com.taskmanagement.api.security.JwtUtil;
 import com.taskmanagement.api.user.User;
 import com.taskmanagement.api.user.UserRepository;
@@ -17,13 +18,16 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TaskListService taskListService;
 
     public AuthService(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-            UserRepository userRepository, PasswordEncoder passwordEncoder) {
+            UserRepository userRepository, PasswordEncoder passwordEncoder,
+            TaskListService taskListService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.taskListService = taskListService;
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -43,6 +47,7 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setNickname(request.nickname());
         userRepository.save(user);
+        taskListService.createDefaultListsForUser(user.getId());
         String token = jwtUtil.generateToken(request.email());
         return Optional.of(new LoginResponse(token));
     }
