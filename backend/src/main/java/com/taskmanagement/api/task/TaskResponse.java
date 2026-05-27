@@ -7,6 +7,7 @@ public record TaskResponse(
         Long id,
         Long listId,
         String listName,
+        Long groupId,
         String title,
         String description,
         LocalDate dueDate,
@@ -15,13 +16,16 @@ public record TaskResponse(
         LocalDateTime completedAt,
         boolean archived,
         int position,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Long assigneeUserId,
+        String assigneeNickname
 ) {
-    static TaskResponse from(Task task) {
+    static TaskResponse from(Task task, String assigneeNickname) {
         return new TaskResponse(
                 task.getId(),
                 task.getTaskList().getId(),
                 task.getTaskList().getName(),
+                task.getTaskList().getGroupId(),
                 task.getTitle(),
                 task.getDescription(),
                 task.getDueDate(),
@@ -30,7 +34,9 @@ public record TaskResponse(
                 task.getCompletedAt(),
                 task.isArchived(),
                 task.getPosition(),
-                task.getCreatedAt()
+                task.getCreatedAt(),
+                task.getAssigneeUserId(),
+                assigneeNickname
         );
     }
 }

@@ -90,6 +90,9 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
         {task.dueDate && (
           <p className={styles.due} style={dueDateStyle?.dueTextStyle}>期限: {task.dueDate}</p>
         )}
+        {task.assigneeNickname && (
+          <p className={styles.assignee}>担当: {task.assigneeNickname}</p>
+        )}
       </div>
       {isDetailOpen && (
         <TaskDetailModal

@@ -29,6 +29,7 @@ export interface TaskResponse {
   id: number;
   listId: number;
   listName: string;
+  groupId: number | null;
   title: string;
   description: string | null;
   dueDate: string | null;
@@ -38,6 +39,8 @@ export interface TaskResponse {
   archived: boolean;
   position: number;
   createdAt: string;
+  assigneeUserId: number | null;
+  assigneeNickname: string | null;
 }
 
 export type KanbanColumns = Record<string, TaskResponse[]>;
@@ -48,6 +51,7 @@ export interface TaskCreateRequest {
   description?: string;
   dueDate?: string;
   priority?: 'high' | 'medium' | 'low';
+  assigneeUserId?: number | null;
 }
 
 export interface TaskStatusUpdateRequest {
@@ -61,6 +65,8 @@ export interface TaskUpdateRequest {
   description?: string | null;
   dueDate?: string | null;
   priority?: 'high' | 'medium' | 'low';
+  assigneeUserId?: number | null;
+  clearAssignee?: boolean;
 }
 
 export interface ListCreateRequest {

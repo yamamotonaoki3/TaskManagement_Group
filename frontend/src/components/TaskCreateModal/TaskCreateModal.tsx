@@ -1,20 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import type { TaskCreateRequest } from '../../types/task';
+import { useGroups } from '../../hooks/useGroups';
+import type { GroupMemberResponse, TaskCreateRequest } from '../../types/task';
 import styles from './TaskCreateModal.module.css';
 
 interface TaskCreateModalProps {
   listId: number;
+  groupId: number | null;
   onClose: () => void;
   onCreate: (data: TaskCreateRequest) => Promise<void>;
 }
 
-export function TaskCreateModal({ listId, onClose, onCreate }: TaskCreateModalProps) {
+export function TaskCreateModal({ listId, groupId, onClose, onCreate }: TaskCreateModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
+  const [assigneeUserId, setAssigneeUserId] = useState<number | null>(null);
+  const [members, setMembers] = useState<GroupMemberResponse[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
+  const { getMembers } = useGroups();
+
+  useEffect(() => {
+    if (groupId != null) {
+      getMembers(groupId).then(setMembers).catch(() => {});
+    }
+  }, [groupId, getMembers]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +39,7 @@ export function TaskCreateModal({ listId, onClose, onCreate }: TaskCreateModalPr
         description: description.trim() || undefined,
         dueDate: dueDate || undefined,
         priority,
+        assigneeUserId: groupId != null ? assigneeUserId : undefined,
       });
       onClose();
     } finally {
@@ -83,6 +96,21 @@ export function TaskCreateModal({ listId, onClose, onCreate }: TaskCreateModalPr
               <option value="low">低</option>
             </select>
           </label>
+          {groupId != null && (
+            <label className={styles.label}>
+              担当者
+              <select
+                className={styles.select}
+                value={assigneeUserId ?? ''}
+                onChange={(e) => setAssigneeUserId(e.target.value ? Number(e.target.value) : null)}
+              >
+                <option value="">未割り当て</option>
+                {members.map((m) => (
+                  <option key={m.userId} value={m.userId}>{m.nickname}</option>
+                ))}
+              </select>
+            </label>
+          )}
           <div className={styles.actions}>
             <button type="button" className={styles.cancelButton} onClick={onClose}>
               キャンセル
