@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { createGroup, fetchMyGroups, fetchGroupMembers, inviteMember } from '../api/groupApi';
+import { createGroup, fetchGroupMembers, fetchMyGroups, inviteMember } from '../api/groupApi';
 import type { GroupMemberResponse, GroupResponse } from '../types/task';
 
 export function useGroups() {
@@ -20,7 +20,12 @@ export function useGroups() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    fetchMyGroups()
+      .then(setGroups)
+      .catch(() => setError('グループの読み込みに失敗しました'))
+      .finally(() => setLoading(false));
+  }, []);
 
   const addGroup = useCallback(async (name: string): Promise<GroupResponse> => {
     const created = await createGroup(name);
