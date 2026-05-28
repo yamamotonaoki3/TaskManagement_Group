@@ -84,7 +84,7 @@
 }
 
 .assignee {
-  margin: 3px 0 0;
-  font-size: 11px;
-  color: #4a5568;
+  margin: 6px 0 0;
+  display: flex;
+  align-items: center;
 }

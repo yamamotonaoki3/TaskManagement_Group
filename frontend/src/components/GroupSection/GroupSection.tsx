@@ -1,10 +1,12 @@
 import { closestCenter, type CollisionDetection, DndContext, type DragEndEvent, type DragOverEvent, type DragStartEvent, PointerSensor, rectIntersection, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import type { GroupResponse, ListResponse, TaskCreateRequest, TaskResponse, TaskUpdateRequest } from '../../types/task';
+import { fetchGroupMembers } from '../../api/groupApi';
+import type { GroupMemberResponse, GroupResponse, ListResponse, TaskCreateRequest, TaskResponse, TaskUpdateRequest } from '../../types/task';
 import { KanbanColumn } from '../KanbanColumn/KanbanColumn';
+import MemberAvatar from '../MemberAvatar/MemberAvatar';
 import modalStyles from '../TaskCreateModal/TaskCreateModal.module.css';
 import styles from './GroupSection.module.css';
 
@@ -48,12 +50,17 @@ export function GroupSection({
   patchStatus,
 }: Props) {
   const navigate = useNavigate();
+  const [members, setMembers] = useState<GroupMemberResponse[]>([]);
   const [overColumnId, setOverColumnId] = useState<number | null>(null);
   const activeTypeRef = useRef<'column' | 'task' | null>(null);
   const [showAddList, setShowAddList] = useState(false);
   const [newListName, setNewListName] = useState('');
   const [addingList, setAddingList] = useState(false);
   const isOwner = group.ownerUserId === currentUserId;
+
+  useEffect(() => {
+    fetchGroupMembers(group.id).then(setMembers).catch(() => {});
+  }, [group.id]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -179,6 +186,14 @@ export function GroupSection({
         >
           メンバー管理
         </button>
+        <div className={styles.memberAvatars}>
+          {members.slice(0, 5).map((m) => (
+            <MemberAvatar key={m.userId} nickname={m.nickname} userId={m.userId} size="sm" />
+          ))}
+          {members.length > 5 && (
+            <span className={styles.moreCount}>+{members.length - 5}</span>
+          )}
+        </div>
       </div>
 
       <DndContext

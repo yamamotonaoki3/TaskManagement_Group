@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { type CSSProperties, useState } from 'react';
 
 import type { TaskResponse, TaskUpdateRequest } from '../../types/task';
+import MemberAvatar from '../MemberAvatar/MemberAvatar';
 import { TaskDetailModal } from '../TaskDetailModal/TaskDetailModal';
 import styles from './TaskCard.module.css';
 
@@ -90,8 +91,10 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
         {task.dueDate && (
           <p className={styles.due} style={dueDateStyle?.dueTextStyle}>期限: {task.dueDate}</p>
         )}
-        {task.assigneeNickname && (
-          <p className={styles.assignee}>担当: {task.assigneeNickname}</p>
+        {task.assigneeNickname != null && task.assigneeUserId != null && (
+          <div className={styles.assignee}>
+            <MemberAvatar nickname={task.assigneeNickname} userId={task.assigneeUserId} size="sm" />
+          </div>
         )}
       </div>
       {isDetailOpen && (
