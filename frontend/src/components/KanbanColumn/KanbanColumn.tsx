@@ -81,7 +81,7 @@ export function KanbanColumn({ listId, listName, groupId, tasks, isSearching, is
   return (
     <div ref={setSortableRef} className={styles.column} style={style}>
       <div className={styles.header}>
-        <div className={styles.dragHandle} {...attributes} {...listeners}>⠿</div>
+        <div className={styles.dragHandle} {...attributes} {...listeners} title="ドラッグして並び替え">⋮⋮</div>
         <h2 className={styles.heading}>{listName}</h2>
         <div className={styles.headerRight}>
           <button
