@@ -64,6 +64,28 @@
   background: #ebf0ff;
 }
 
+.deleteGroupBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.header:hover .deleteGroupBtn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.deleteGroupBtn:hover {
+  background: #fff5f5;
+  color: #e53e3e;
+}
+
 .memberAvatars {
   display: flex;
   align-items: center;

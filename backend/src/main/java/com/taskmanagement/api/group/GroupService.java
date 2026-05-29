@@ -1,6 +1,9 @@
 package com.taskmanagement.api.group;
 
+import com.taskmanagement.api.list.TaskList;
+import com.taskmanagement.api.list.TaskListRepository;
 import com.taskmanagement.api.list.TaskListService;
+import com.taskmanagement.api.task.TaskRepository;
 import com.taskmanagement.api.user.User;
 import com.taskmanagement.api.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,16 +22,22 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
     private final TaskListService taskListService;
+    private final TaskListRepository taskListRepository;
+    private final TaskRepository taskRepository;
 
     public GroupService(
             GroupRepository groupRepository,
             GroupMemberRepository groupMemberRepository,
             UserRepository userRepository,
-            TaskListService taskListService) {
+            TaskListService taskListService,
+            TaskListRepository taskListRepository,
+            TaskRepository taskRepository) {
         this.groupRepository = groupRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.userRepository = userRepository;
         this.taskListService = taskListService;
+        this.taskListRepository = taskListRepository;
+        this.taskRepository = taskRepository;
     }
 
     @Transactional
@@ -78,6 +87,16 @@ public class GroupService {
         if (!group.getOwnerUserId().equals(me.getId())) {
             throw new AccessDeniedException("この操作を行う権限がありません");
         }
+    }
+
+    @Transactional
+    public void deleteGroup(Long groupId) throws AccessDeniedException {
+        checkOwner(groupId);
+        List<TaskList> groupLists = taskListRepository.findByGroupId(groupId);
+        groupLists.forEach(l -> taskRepository.deleteByTaskListId(l.getId()));
+        taskListRepository.deleteAll(groupLists);
+        groupMemberRepository.deleteByGroupId(groupId);
+        groupRepository.deleteById(groupId);
     }
 
     @Transactional

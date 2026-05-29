@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,5 +46,11 @@ public class GroupController {
                                       @RequestBody @Valid InviteMemberRequest req)
             throws AccessDeniedException {
         return groupService.inviteMember(groupId, req);
+    }
+
+    @DeleteMapping("/{groupId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long groupId) throws AccessDeniedException {
+        groupService.deleteGroup(groupId);
     }
 }

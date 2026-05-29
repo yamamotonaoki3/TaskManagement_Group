@@ -30,6 +30,7 @@ interface Props {
   onReorder: (listId: number, taskIds: number[]) => Promise<void>;
   onReorderColumns: (ids: number[]) => void;
   onAddList: (name: string, groupId: number) => Promise<void>;
+  onDeleteGroup: () => Promise<void>;
   patchStatus: (id: number, data: { status: 'todo' | 'in_progress' | 'done'; listId: number; position: number }) => Promise<void>;
 }
 
@@ -47,6 +48,7 @@ export function GroupSection({
   onReorder,
   onReorderColumns,
   onAddList,
+  onDeleteGroup,
   patchStatus,
 }: Props) {
   const navigate = useNavigate();
@@ -194,6 +196,20 @@ export function GroupSection({
             <span className={styles.moreCount}>+{members.length - 5}</span>
           )}
         </div>
+        {isOwner && (
+          <button
+            className={styles.deleteGroupBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(`グループ「${group.name}」を削除しますか？\nグループ内のすべてのカラムとタスクも削除されます。この操作は取り消せません。`)) {
+                onDeleteGroup();
+              }
+            }}
+            aria-label="グループを削除"
+          >
+            ×
+          </button>
+        )}
       </div>
 
       <DndContext
