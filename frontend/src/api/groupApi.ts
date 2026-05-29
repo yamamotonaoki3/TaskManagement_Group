@@ -38,3 +38,6 @@ export const fetchGroupMembers = (groupId: number): Promise<GroupMemberResponse[
 
 export const inviteMember = (groupId: number, email: string): Promise<GroupMemberResponse> =>
   api.post<GroupMemberResponse>(`/groups/${groupId}/members`, { email }).then((r) => r.data);
+
+export const deleteGroup = (groupId: number): Promise<void> =>
+  api.delete(`/groups/${groupId}`).then(() => {});

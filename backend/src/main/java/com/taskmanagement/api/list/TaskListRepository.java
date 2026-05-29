@@ -13,4 +13,6 @@ public interface TaskListRepository extends JpaRepository<TaskList, Long> {
 
     @Query("SELECT l FROM TaskList l WHERE l.userId = :userId OR l.groupId IN :groupIds ORDER BY l.position ASC")
     List<TaskList> findByUserIdOrGroupIdIn(Long userId, java.util.Collection<Long> groupIds);
+
+    List<TaskList> findByGroupId(Long groupId);
 }

@@ -22,7 +22,7 @@ export function KanbanBoard() {
   const navigate = useNavigate();
   const { currentUserId } = useAuth();
   const { lists, columns, columnOrder, loading, error, query, setQuery, create, patchStatus, patchTask, addList, reorder, reorderColumns, deleteTask, removeList, refresh } = useTasks();
-  const { groups, addGroup } = useGroups();
+  const { groups, addGroup, removeGroup } = useGroups();
 
   const [overColumnId, setOverColumnId] = useState<number | null>(null);
   const activeTypeRef = useRef<'column' | 'task' | null>(null);
@@ -59,6 +59,10 @@ export function KanbanBoard() {
 
   const handleAddGroupList = async (name: string, groupId: number) => {
     await addList({ name, groupId });
+  };
+
+  const handleDeleteGroup = async (groupId: number) => {
+    await removeGroup(groupId);
   };
 
   const sensors = useSensors(
@@ -240,6 +244,7 @@ export function KanbanBoard() {
                   onReorder={reorder}
                   onReorderColumns={reorderColumns}
                   onAddList={handleAddGroupList}
+                  onDeleteGroup={() => handleDeleteGroup(group.id)}
                   patchStatus={patchStatus}
                 />
               );

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { createGroup, fetchGroupMembers, fetchMyGroups, inviteMember } from '../api/groupApi';
+import { createGroup, deleteGroup, fetchGroupMembers, fetchMyGroups, inviteMember } from '../api/groupApi';
 import type { GroupMemberResponse, GroupResponse } from '../types/task';
 
 export function useGroups() {
@@ -44,5 +44,10 @@ export function useGroups() {
     [],
   );
 
-  return { groups, loading, error, addGroup, getMembers, invite, reload: load };
+  const removeGroup = useCallback(async (groupId: number): Promise<void> => {
+    await deleteGroup(groupId);
+    setGroups((prev) => prev.filter((g) => g.id !== groupId));
+  }, []);
+
+  return { groups, loading, error, addGroup, getMembers, invite, removeGroup, reload: load };
 }
