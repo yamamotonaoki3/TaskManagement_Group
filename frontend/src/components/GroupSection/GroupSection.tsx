@@ -190,7 +190,7 @@ export function GroupSection({
         </button>
         <div className={styles.memberAvatars}>
           {members.slice(0, 5).map((m) => (
-            <MemberAvatar key={m.userId} nickname={m.nickname} userId={m.userId} size="sm" />
+            <MemberAvatar key={m.userId} nickname={m.nickname} userId={m.userId} size="sm" isOwner={m.userId === group.ownerUserId} />
           ))}
           {members.length > 5 && (
             <span className={styles.moreCount}>+{members.length - 5}</span>
@@ -253,7 +253,7 @@ export function GroupSection({
 
       <div className={styles.addListRow}>
         <button className={styles.addListButton} onClick={() => setShowAddList(true)}>
-          ＋ カラム追加
+          ＋ タスクリスト追加
         </button>
       </div>
 

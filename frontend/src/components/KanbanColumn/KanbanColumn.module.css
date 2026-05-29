@@ -20,9 +20,10 @@
   cursor: grab;
   padding: 0 6px;
   color: #a0aec0;
-  font-size: 16px;
+  font-size: 14px;
   user-select: none;
   flex-shrink: 0;
+  letter-spacing: 2px;
 }
 
 .dragHandle:active {
